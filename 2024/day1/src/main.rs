@@ -65,4 +65,5 @@ fn main() {
         sum += left[i] * occurence[i];
     }
     println! {"the sum : {sum}"};
+    // answer = 28786472
 }
