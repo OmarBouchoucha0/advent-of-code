@@ -49,4 +49,6 @@ fn main() {
             mul_result.push(calculate_result(&mat.as_str()));
         }
     }
+    let final_sum: u64 = mul_result.iter().sum();
+    println!("the sum is {final_sum}");
 }
