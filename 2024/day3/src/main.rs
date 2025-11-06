@@ -11,6 +11,20 @@ fn check_syntax(word: &str) -> bool {
     }
     false
 }
+fn check_ability(word: &str) -> bool {
+    if word == "do()" {
+        return true;
+    } else if word == "dont()" {
+        return true;
+    }
+    false
+}
+fn get_ability(word: &str) -> bool {
+    if word == "do()" {
+        return true;
+    }
+    false
+}
 
 fn calculate_result(word: &str) -> u64 {
     let Some(numbers) = word.strip_prefix("mul(") else {
@@ -31,7 +45,6 @@ fn calculate_result(word: &str) -> u64 {
         Err(_) => panic!("error"),
     };
 
-    println!("{x} * {y} = {}", x * y);
     x * y
 }
 
@@ -44,8 +57,13 @@ fn main() {
     };
     let mut mul_result: Vec<u64> = Vec::new();
     let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
+    let mut ability = true;
     for mat in re.find_iter(&input) {
-        if check_syntax(mat.as_str()) {
+        if check_ability(mat.as_str()) {
+            ability = get_ability(mat.as_str());
+            println!("{:?}", ability);
+        }
+        if ability && check_syntax(mat.as_str()) {
             mul_result.push(calculate_result(&mat.as_str()));
         }
     }
