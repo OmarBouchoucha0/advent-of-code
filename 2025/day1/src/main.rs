@@ -1,37 +1,45 @@
 use std::fs;
 
-fn parse_rotation(rotation: &str) -> (&str, u8) {
+fn parse_rotation(rotation: &str) -> (&str, u32) {
     let first_char = rotation.chars().next().unwrap();
     let (direction, distance) = rotation.split_at(first_char.len_utf8());
-    let distance: u8 = distance.parse().unwrap();
+    let distance: u32 = distance.parse().unwrap();
     (direction, distance)
 }
 
-fn move_dial(dial: u8, rotation: &str) -> u8 {
+fn move_dial(dial: u32, rotation: &str) -> (u32, u32) {
     let (direction, distance) = parse_rotation(rotation);
-    let upper: u8 = 99;
-    let lower: u8 = 0;
-    let mut sum = 0;
+    let upper: i16 = 100;
+    let lower: i16 = 0;
+    let current_dial: i16 = dial as i16;
+    let rotation_distance: i16 = distance as i16;
+    let mut sum: i16;
+    let mut zero: i16 = 0;
+
     if direction == "R" {
-        sum = dial + distance;
-        if sum >= upper {
-            sum = sum - upper;
+        sum = current_dial + rotation_distance;
+        if sum > upper {
+            zero += sum / upper;
         }
+        sum = sum % upper;
     } else {
-        sum = dial - distance;
-        if sum <= lower {
-            sum = sum + upper;
+        sum = current_dial - rotation_distance;
+        if sum < lower {
+            zero += (sum / upper).abs();
         }
+        sum = (sum % upper + upper) % upper;
     }
-    sum
+    (sum as u32, zero as u32)
 }
 
 fn main() {
-    let mut dial: u8 = 50;
-    let mut password: u8 = 0;
+    let mut dial: u32 = 50;
+    let mut password: u32 = 0;
+    let mut zero;
     let input = fs::read_to_string("input.txt").unwrap();
     for rotation in input.lines() {
-        dial = move_dial(dial, rotation);
+        (dial, zero) = move_dial(dial, rotation);
+        password += zero;
         if dial == 0 {
             password += 1;
         }
