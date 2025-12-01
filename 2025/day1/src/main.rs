@@ -161,4 +161,20 @@ mod tests {
         assert_eq!(dir, "L");
         assert_eq!(dist, 123);
     }
+    #[test]
+    fn test_sequence() {
+        let mut dial: u32 = 50;
+        let mut password: u32 = 0;
+        let mut zero;
+        let input = "L68 L30 R48 L5 R60 L55 L1 L99 R14 L82";
+        for rotation in input.split_whitespace() {
+            (dial, zero) = move_dial(dial, rotation);
+            password += zero;
+            if dial == 0 {
+                password += 1;
+            }
+        }
+        assert_eq!(password, 6);
+        assert_eq!(dial, 32);
+    }
 }
