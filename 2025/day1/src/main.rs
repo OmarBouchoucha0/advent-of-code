@@ -37,13 +37,9 @@ fn main() {
     let mut password: u32 = 0;
     let mut zero;
     let input = fs::read_to_string("input.txt").unwrap();
-
     for rotation in input.lines() {
         (dial, zero) = move_dial(dial, rotation);
         password += zero;
-        if dial == 0 {
-            password += 1;
-        }
     }
     println!("Password : {password}");
 }
