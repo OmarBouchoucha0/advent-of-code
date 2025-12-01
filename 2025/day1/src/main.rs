@@ -9,34 +9,35 @@ fn parse_rotation(rotation: &str) -> (&str, u32) {
 
 fn move_dial(dial: u32, rotation: &str) -> (u32, u32) {
     let (direction, distance) = parse_rotation(rotation);
-    let upper: i16 = 100;
-    let lower: i16 = 0;
-    let current_dial: i16 = dial as i16;
-    let rotation_distance: i16 = distance as i16;
-    let mut sum: i16;
-    let mut zero: i16 = 0;
+    let upper = 99;
+    let lower = 0;
+    let modulo = upper + 1;
+    let mut new_dial: i32 = dial as i32;
+    let rotation_distance: i32 = distance as i32;
+    let mut zero_crossings: u32 = 0;
 
     if direction == "R" {
-        sum = current_dial + rotation_distance;
-        if sum > upper {
-            zero += sum / upper;
+        new_dial += rotation_distance;
+        if new_dial > upper {
+            zero_crossings = (new_dial / modulo) as u32;
+            new_dial = new_dial % modulo;
         }
-        sum = sum % upper;
     } else {
-        sum = current_dial - rotation_distance;
-        if sum < lower {
-            zero += (sum / upper).abs();
+        new_dial -= rotation_distance;
+        if new_dial < lower {
+            zero_crossings = (((-new_dial) + modulo - 1) / modulo) as u32;
+            new_dial = ((new_dial % modulo) + modulo) % modulo;
         }
-        sum = (sum % upper + upper) % upper;
     }
-    (sum as u32, zero as u32)
+    println!("rotation: {rotation}, new_dial: {new_dial}, zero_crossings: {zero_crossings}");
+    (new_dial as u32, zero_crossings)
 }
-
 fn main() {
     let mut dial: u32 = 50;
     let mut password: u32 = 0;
     let mut zero;
     let input = fs::read_to_string("input.txt").unwrap();
+
     for rotation in input.lines() {
         (dial, zero) = move_dial(dial, rotation);
         password += zero;
