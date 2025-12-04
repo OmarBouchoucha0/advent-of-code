@@ -7,13 +7,26 @@ fn range_limits(range: &str) -> Vec<&str> {
 
 fn validate_id(id: i128) -> bool {
     let id = id.to_string();
-    for i in 0..id.len() {
-        let (left, right) = id.split_at(i);
-        if left == right {
+    for i in 1..id.len() {
+        if check_repeating_pattern(&id, i) {
             return false;
         }
     }
     return true;
+}
+
+fn check_repeating_pattern(id: &str, index: usize) -> bool {
+    if id.len() % index != 0 {
+        return false;
+    }
+    let pattern = &id[..index];
+    let n_repeats = id.len() / index;
+    for i in 0..n_repeats {
+        if pattern != &id[i * index..(i + 1) * index] {
+            return false;
+        }
+    }
+    true
 }
 
 fn validate_range(range: &str) -> i128 {
@@ -31,7 +44,6 @@ fn validate_range(range: &str) -> i128 {
 
 fn main() {
     let content = fs::read_to_string("input.txt").unwrap();
-
     let mut sum = 0;
     for range in content.trim().split(",") {
         println!("Range : {range}");
